@@ -40,13 +40,17 @@ const datas = computed(() => {
   <n-table v-if="commercialRepayments?.length || providentFundRepayments?.length">
     <thead>
       <tr>
-        <th>日期</th>
-        <th v-if="showProvidentFund">本期本金（公）</th>
-        <th v-if="showProvidentFund">本期利息（公）</th>
-        <th v-if="showProvidentFund">本期剩余本金（公）</th>
-        <th v-if="showCommercial">本期本金（商）</th>
-        <th v-if="showCommercial">本期利息（商）</th>
-        <th v-if="showCommercial">本期剩余本金（商）</th>
+        <th rowspan="2">日期</th>
+        <th v-if="showProvidentFund" colspan="3">公积金贷款</th>
+        <th v-if="showCommercial" colspan="3">商业贷款</th>
+      </tr>
+      <tr>
+        <th v-if="showProvidentFund">本期本金</th>
+        <th v-if="showProvidentFund">本期利息</th>
+        <th v-if="showProvidentFund">本期剩余本金</th>
+        <th v-if="showCommercial">本期本金</th>
+        <th v-if="showCommercial">本期利息</th>
+        <th v-if="showCommercial">本期剩余本金</th>
       </tr>
     </thead>
     <tbody>
@@ -54,12 +58,12 @@ const datas = computed(() => {
         <td>
           <n-time type="date" :time="entry.providentFund?.date ?? entry.commercial?.date"></n-time>
         </td>
-        <td v-if="entry.providentFund">{{ entry.providentFund.principal }}</td>
-        <td v-if="entry.providentFund">{{ entry.providentFund.interest }}</td>
-        <td v-if="entry.providentFund">{{ entry.providentFund.remainingPrincipal }}</td>
-        <td v-if="entry.commercial">{{ entry.commercial.principal }}</td>
-        <td v-if="entry.commercial">{{ entry.commercial.interest }}</td>
-        <td v-if="entry.commercial">{{ entry.commercial.remainingPrincipal }}</td>
+        <td v-if="showProvidentFund">{{ entry.providentFund?.principal }}</td>
+        <td v-if="showProvidentFund">{{ entry.providentFund?.interest }}</td>
+        <td v-if="showProvidentFund">{{ entry.providentFund?.remainingPrincipal }}</td>
+        <td v-if="showCommercial">{{ entry.commercial?.principal }}</td>
+        <td v-if="showCommercial">{{ entry.commercial?.interest }}</td>
+        <td v-if="showCommercial">{{ entry.commercial?.remainingPrincipal }}</td>
       </tr>
     </tbody>
   </n-table>
