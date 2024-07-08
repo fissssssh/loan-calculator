@@ -1,17 +1,44 @@
 <script setup lang="ts">
 import type { RepaymentEntry } from '@/models/repaymentEntry'
+import { NTime, type DataTableColumns } from 'naive-ui'
+
+const columns: DataTableColumns<RepaymentEntry> = [
+  {
+    title: '日期',
+    key: 'date',
+    fixed: 'left',
+    width: 100,
+    render(row) {
+      return h(NTime, { type: 'date', time: row.date })
+    }
+  },
+  {
+    title: '公积金还款',
+    titleColSpan: 3,
+    key: 'providentFund',
+    children: [
+      { title: '本期本金', key: 'providentFund.principal' },
+      { title: '本期利息', key: 'providentFund.interest' },
+      { title: '剩余本金', key: 'providentFund.remainingPrincipal' }
+    ]
+  },
+  {
+    title: '商贷还款',
+    titleColSpan: 3,
+    key: 'commercial',
+    children: [
+      { title: '本期本金', key: 'commercial.principal' },
+      { title: '本期利息', key: 'commercial.interest' },
+      { title: '剩余本金', key: 'commercial.remainingPrincipal' }
+    ]
+  }
+]
 
 const props = defineProps<{
   commercialRepayments?: RepaymentEntry[]
   providentFundRepayments?: RepaymentEntry[]
 }>()
 
-const showCommercial = computed(
-  () => props.commercialRepayments && props.commercialRepayments.length
-)
-const showProvidentFund = computed(
-  () => props.providentFundRepayments && props.providentFundRepayments.length
-)
 const datas = computed(() => {
   const rps = new Map<number, { commercial?: RepaymentEntry; providentFund?: RepaymentEntry }>()
 
@@ -32,40 +59,19 @@ const datas = computed(() => {
     }
   }
 
-  return rps
+  return Array.from(rps.entries()).map(([date, entry]) => ({
+    date,
+    ...entry
+  }))
 })
 </script>
 
 <template>
-  <n-table v-if="commercialRepayments?.length || providentFundRepayments?.length">
-    <thead>
-      <tr>
-        <th rowspan="2">日期</th>
-        <th v-if="showProvidentFund" colspan="3">公积金贷款</th>
-        <th v-if="showCommercial" colspan="3">商业贷款</th>
-      </tr>
-      <tr>
-        <th v-if="showProvidentFund">本期本金</th>
-        <th v-if="showProvidentFund">本期利息</th>
-        <th v-if="showProvidentFund">本期剩余本金</th>
-        <th v-if="showCommercial">本期本金</th>
-        <th v-if="showCommercial">本期利息</th>
-        <th v-if="showCommercial">本期剩余本金</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr v-for="(entry, index) of datas.values()" :key="index">
-        <td>
-          <n-time type="date" :time="entry.providentFund?.date ?? entry.commercial?.date"></n-time>
-        </td>
-        <td v-if="showProvidentFund">{{ entry.providentFund?.principal }}</td>
-        <td v-if="showProvidentFund">{{ entry.providentFund?.interest }}</td>
-        <td v-if="showProvidentFund">{{ entry.providentFund?.remainingPrincipal }}</td>
-        <td v-if="showCommercial">{{ entry.commercial?.principal }}</td>
-        <td v-if="showCommercial">{{ entry.commercial?.interest }}</td>
-        <td v-if="showCommercial">{{ entry.commercial?.remainingPrincipal }}</td>
-      </tr>
-    </tbody>
-  </n-table>
-  <n-empty v-else description="无数据"></n-empty>
+  <n-data-table
+    :columns="columns"
+    :data="datas"
+    scroll-x="1000px"
+    max-height="500px"
+    virtual-scroll
+  />
 </template>
