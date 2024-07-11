@@ -66,41 +66,50 @@ onMounted(() => {
 })
 
 function rerender() {
-  const series = [
-    {
-      name: '商业贷款本金',
-      type: 'line',
-      stack: 'total',
-      showSymbol: false,
-      areaStyle: {},
-      data: props.commercialRepayments?.map((item) => [item.date, item.principal])
-    },
-    {
-      name: '商业贷款利息',
-      type: 'line',
-      stack: 'total',
-      showSymbol: false,
-      areaStyle: {},
-      data: props.commercialRepayments?.map((item) => [item.date, item.interest])
-    },
-    {
-      name: '公积金贷款本金',
-      type: 'line',
-      stack: 'total',
-      showSymbol: false,
-      areaStyle: {},
-      data: props.providentFundRepayments?.map((item) => [item.date, item.principal])
-    },
-    {
-      name: '公积金贷款利息',
-      type: 'line',
-      stack: 'total',
-      showSymbol: false,
-      areaStyle: {},
-      data: props.providentFundRepayments?.map((item) => [item.date, item.interest])
-    }
-  ]
-  option.value.series = series.filter((item) => item.data?.length > 0)
+  let series: LineSeriesOption[] = []
+  if (props.commercialRepayments?.length) {
+    series = [
+      ...series,
+      {
+        name: '商业贷款本金',
+        type: 'line',
+        stack: 'total',
+        showSymbol: false,
+        areaStyle: {},
+        data: props.commercialRepayments?.map((item) => [item.date, item.principal])
+      },
+      {
+        name: '商业贷款利息',
+        type: 'line',
+        stack: 'total',
+        showSymbol: false,
+        areaStyle: {},
+        data: props.commercialRepayments?.map((item) => [item.date, item.interest])
+      }
+    ]
+  }
+  if (props.providentFundRepayments?.length) {
+    series = [
+      ...series,
+      {
+        name: '公积金贷款本金',
+        type: 'line',
+        stack: 'total',
+        showSymbol: false,
+        areaStyle: {},
+        data: props.providentFundRepayments?.map((item) => [item.date, item.principal])
+      },
+      {
+        name: '公积金贷款利息',
+        type: 'line',
+        stack: 'total',
+        showSymbol: false,
+        areaStyle: {},
+        data: props.providentFundRepayments?.map((item) => [item.date, item.interest])
+      }
+    ]
+  }
+  option.value.series = series
   console.log(option.value)
 }
 </script>

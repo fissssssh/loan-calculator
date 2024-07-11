@@ -7,8 +7,8 @@ const props = defineProps<{
   providentFundRepayments?: RepaymentEntry[]
 }>()
 
-const columns: DataTableColumns<RepaymentEntry> = computed(() => {
-  const cols = [
+const columns = computed(() => {
+  const cols: DataTableColumns<RepaymentEntry> = [
     {
       title: '日期',
       key: 'date',
