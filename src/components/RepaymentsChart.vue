@@ -42,12 +42,14 @@ const props = defineProps<{
 }>()
 
 const option: Ref<EChartsOption> = ref({
+  darkMode: true,
   title: {
-    text: '还款详情'
+    text: '还款详情',
+    left: 'center'
   },
   tooltip: { trigger: 'axis' },
-  legend: {},
-  grid: {},
+  legend: { top: 30 },
+  grid: { containLabel: true, left: 0, top: 90 },
   yAxis: { type: 'value' },
   xAxis: { type: 'time' }
 })
@@ -64,7 +66,7 @@ onMounted(() => {
 })
 
 function rerender() {
-  option.value.series = [
+  const series = [
     {
       name: '商业贷款本金',
       type: 'line',
@@ -98,6 +100,7 @@ function rerender() {
       data: props.providentFundRepayments?.map((item) => [item.date, item.interest])
     }
   ]
+  option.value.series = series.filter((item) => item.data?.length > 0)
   console.log(option.value)
 }
 </script>

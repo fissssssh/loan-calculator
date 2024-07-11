@@ -12,7 +12,7 @@ export default defineConfig({
   plugins: [
     vue(),
     VueDevTools(),
-    AutoImport({ imports: ['vue', 'vue-router'], resolvers: [NaiveUiResolver()] }),
+    AutoImport({ imports: ['vue', 'vue-router', '@vueuse/core'], resolvers: [NaiveUiResolver()] }),
     Components({ resolvers: [NaiveUiResolver()] })
   ],
   resolve: {

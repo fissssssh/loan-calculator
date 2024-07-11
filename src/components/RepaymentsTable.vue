@@ -2,42 +2,52 @@
 import type { RepaymentEntry } from '@/models/repaymentEntry'
 import { NTime, type DataTableColumns } from 'naive-ui'
 
-const columns: DataTableColumns<RepaymentEntry> = [
-  {
-    title: '日期',
-    key: 'date',
-    fixed: 'left',
-    width: 100,
-    render(row) {
-      return h(NTime, { type: 'date', time: row.date })
-    }
-  },
-  {
-    title: '公积金还款',
-    titleColSpan: 3,
-    key: 'providentFund',
-    children: [
-      { title: '本期本金', key: 'providentFund.principal' },
-      { title: '本期利息', key: 'providentFund.interest' },
-      { title: '剩余本金', key: 'providentFund.remainingPrincipal' }
-    ]
-  },
-  {
-    title: '商贷还款',
-    titleColSpan: 3,
-    key: 'commercial',
-    children: [
-      { title: '本期本金', key: 'commercial.principal' },
-      { title: '本期利息', key: 'commercial.interest' },
-      { title: '剩余本金', key: 'commercial.remainingPrincipal' }
-    ]
-  }
-]
-
 const props = defineProps<{
   commercialRepayments?: RepaymentEntry[]
   providentFundRepayments?: RepaymentEntry[]
 }>()
+
+const columns: DataTableColumns<RepaymentEntry> = computed(() => {
+  const cols = [
+    {
+      title: '日期',
+      key: 'date',
+      fixed: 'left',
+      width: 100,
+      render(row) {
+        return h(NTime, { type: 'date', time: row.date })
+      }
+    }
+  ]
+
+  if (props.providentFundRepayments && props.providentFundRepayments.length) {
+    cols.push({
+      title: '公积金还款',
+      titleColSpan: 3,
+      key: 'providentFund',
+      children: [
+        { title: '本期本金', key: 'providentFund.principal' },
+        { title: '本期利息', key: 'providentFund.interest' },
+        { title: '剩余本金', key: 'providentFund.remainingPrincipal' }
+      ]
+    })
+  }
+
+  if (props.commercialRepayments && props.commercialRepayments.length) {
+    cols.push({
+      title: '商贷还款',
+      titleColSpan: 3,
+      key: 'commercial',
+      children: [
+        { title: '本期本金', key: 'commercial.principal' },
+        { title: '本期利息', key: 'commercial.interest' },
+        { title: '剩余本金', key: 'commercial.remainingPrincipal' }
+      ]
+    })
+  }
+
+  return cols
+})
 
 const datas = computed(() => {
   const rps = new Map<number, { commercial?: RepaymentEntry; providentFund?: RepaymentEntry }>()
@@ -70,8 +80,9 @@ const datas = computed(() => {
   <n-data-table
     :columns="columns"
     :data="datas"
-    scroll-x="1000px"
+    size="small"
+    striped
+    :scroll-x="columns.length > 2 ? '1000px' : '550px'"
     max-height="500px"
-    virtual-scroll
-  />
+    virtual-scroll />
 </template>
