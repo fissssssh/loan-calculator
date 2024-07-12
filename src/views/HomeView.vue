@@ -2,7 +2,7 @@
 import { computed } from 'vue'
 import dayjs from 'dayjs'
 import * as calculator from '@/utils/calculator'
-import { Info12Filled } from '@vicons/fluent'
+import Info12Filled from '@vicons/fluent/Info12Filled'
 
 const type = ref(1) // 1 公积金贷款 2 商业贷款 3 组合贷款
 const repaymentMethod = ref(0) // 0 等额本息 1 等额本金

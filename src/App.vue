@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { darkTheme } from 'naive-ui'
-import { WeatherSunny24Regular, WeatherMoon24Filled } from '@vicons/fluent'
+import WeatherSunny24Regular from '@vicons/fluent/WeatherSunny24Regular'
+import WeatherMoon24Filled from '@vicons/fluent/WeatherMoon24Filled'
 const theme = ref()
 const isDark = useDark({
   onChanged(dark: boolean) {

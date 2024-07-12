@@ -19,5 +19,22 @@ export default defineConfig({
     alias: {
       '@': fileURLToPath(new URL('./src', import.meta.url))
     }
+  },
+  build: {
+    chunkSizeWarningLimit: 1024,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('echarts') || id.includes('zrender') || id.includes('vue-echarts')) {
+              return 'echarts'
+            } else if (id.includes('naive-ui')) {
+              return 'naive-ui'
+            }
+            return 'vendor'
+          }
+        }
+      }
+    }
   }
 })

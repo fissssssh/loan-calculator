@@ -24,7 +24,6 @@ declare module 'vue' {
     NTabs: typeof import('naive-ui')['NTabs']
     NTooltip: typeof import('naive-ui')['NTooltip']
     RepaymentsChart: typeof import('./src/components/RepaymentsChart.vue')['default']
-    RepaymentsStatistic: typeof import('./src/components/RepaymentsStatistic.vue')['default']
     RepaymentsTable: typeof import('./src/components/RepaymentsTable.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
