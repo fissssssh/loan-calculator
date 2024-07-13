@@ -6,15 +6,16 @@ import Info12Filled from '@vicons/fluent/Info12Filled'
 
 const type = ref(1) // 1 公积金贷款 2 商业贷款 3 组合贷款
 const repaymentMethod = ref(0) // 0 等额本息 1 等额本金
-const providentFund = ref(0) // 公积金贷款金额
+const providentFund = ref(0) // 公积金贷款金额(万)
 const providentFundYear = ref(30) // 公积金贷款年限
 const providentFundRate = ref(2.85) // 公积金贷款利率%
 const providentFundRepayments = ref()
-const commercial = ref(0) // 商业贷款金额
+const commercial = ref(0) // 商业贷款金额(万)
 const commercialYear = ref(30) // 商业贷款年限
 const commercialRate = ref(3.95) // 商业贷款利率%
 const commercialRepayments = ref()
 const firstRepaymentDate = ref(dayjs().startOf('month').valueOf())
+const displayMode = ref(0) // 0 简洁模式 1 详细模式
 
 const isChooseProvidentFund = computed(() => (type.value & 1) === 1)
 const isChooseCommercial = computed(() => (type.value & 2) === 2)
@@ -31,7 +32,7 @@ function calculate() {
     const period = commercialYear.value * 12
     if (repaymentMethod.value === 0) {
       const rps = calculator.calculateFixedInstallmentRepayments(
-        commercial.value,
+        commercial.value * 10000,
         period,
         rate,
         firstRepaymentDate.value
@@ -39,7 +40,7 @@ function calculate() {
       commercialRepayments.value = rps
     } else if (repaymentMethod.value === 1) {
       const rps = calculator.calculateReducingInstallmentRepayments(
-        commercial.value,
+        commercial.value * 10000,
         period,
         rate,
         firstRepaymentDate.value
@@ -52,7 +53,7 @@ function calculate() {
     const period = providentFundYear.value * 12
     if (repaymentMethod.value === 0) {
       const rps = calculator.calculateFixedInstallmentRepayments(
-        providentFund.value,
+        providentFund.value * 10000,
         period,
         rate,
         firstRepaymentDate.value
@@ -60,7 +61,7 @@ function calculate() {
       providentFundRepayments.value = rps
     } else if (repaymentMethod.value === 1) {
       const rps = calculator.calculateReducingInstallmentRepayments(
-        providentFund.value,
+        providentFund.value * 10000,
         period,
         rate,
         firstRepaymentDate.value
@@ -105,6 +106,7 @@ function calculate() {
             <NFormItem label="公积金贷款金额">
               <NInputNumber v-model:value="providentFund" :min="0">
                 <template #prefix>￥</template>
+                <template #suffix>万</template>
               </NInputNumber>
             </NFormItem>
           </n-gi>
@@ -130,6 +132,7 @@ function calculate() {
             <NFormItem label="商业贷款金额">
               <NInputNumber v-model:value="commercial" :min="0">
                 <template #prefix>￥</template>
+                <template #suffix>万</template>
               </NInputNumber>
             </NFormItem>
           </n-gi>
@@ -161,8 +164,15 @@ function calculate() {
       </n-gi>
     </n-grid>
     <n-tabs>
+      <template #suffix>
+        <n-switch :checked-value="1" :unchecked-value="0" v-model:value="displayMode">
+          <template #checked> 详细 </template>
+          <template #unchecked> 简洁 </template>
+        </n-switch>
+      </template>
       <n-tab-pane name="表格">
         <RepaymentsTable
+          :mode="displayMode"
           :commercial-repayments="commercialRepayments"
           :provident-fund-repayments="providentFundRepayments" />
       </n-tab-pane>

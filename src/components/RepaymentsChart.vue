@@ -17,6 +17,7 @@ import {
   type LegendComponentOption
 } from 'echarts/components'
 import type { RepaymentEntry } from '@/models/repaymentEntry'
+import { RepaymentDisplayMode } from '@/shared/enums'
 
 use([
   TitleComponent,
@@ -109,6 +110,7 @@ function rerender() {
       }
     ]
   }
+
   option.value.series = series
   console.log(option.value)
 }

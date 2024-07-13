@@ -1,14 +1,16 @@
 <script setup lang="ts">
 import type { RepaymentEntry } from '@/models/repaymentEntry'
+import { RepaymentDisplayMode } from '@/shared/enums'
 import { NTime, type DataTableColumns } from 'naive-ui'
 
 const props = defineProps<{
+  mode: RepaymentDisplayMode
   commercialRepayments?: RepaymentEntry[]
   providentFundRepayments?: RepaymentEntry[]
 }>()
 
 const columns = computed(() => {
-  const cols: DataTableColumns<RepaymentEntry> = [
+  let cols: DataTableColumns<RepaymentEntry> = [
     {
       title: '日期',
       key: 'date',
@@ -19,31 +21,54 @@ const columns = computed(() => {
       }
     }
   ]
+  if (props.mode === RepaymentDisplayMode.Simple) {
+    cols = [
+      ...cols,
+      {
+        title: '本期本金',
+        key: 'principal',
+        minWidth: 150,
+        render: (row) => row.principal.toFixed(2)
+      },
+      {
+        title: '本期利息',
+        key: 'interset',
+        minWidth: 150,
+        render: (row) => row.interest?.toFixed(2)
+      },
+      {
+        title: '本期还款',
+        key: 'total',
+        minWidth: 150,
+        render: (row) => (row.principal + row.interest).toFixed(2)
+      }
+    ]
+  } else if (props.mode === RepaymentDisplayMode.Full) {
+    if (props.providentFundRepayments && props.providentFundRepayments.length) {
+      cols.push({
+        title: '公积金还款',
+        titleColSpan: 3,
+        key: 'providentFund',
+        children: [
+          { title: '本期本金', key: 'providentFund.principal', minWidth: 150 },
+          { title: '本期利息', key: 'providentFund.interest', minWidth: 150 },
+          { title: '剩余本金', key: 'providentFund.remainingPrincipal', minWidth: 150 }
+        ]
+      })
+    }
 
-  if (props.providentFundRepayments && props.providentFundRepayments.length) {
-    cols.push({
-      title: '公积金还款',
-      titleColSpan: 3,
-      key: 'providentFund',
-      children: [
-        { title: '本期本金', key: 'providentFund.principal' },
-        { title: '本期利息', key: 'providentFund.interest' },
-        { title: '剩余本金', key: 'providentFund.remainingPrincipal' }
-      ]
-    })
-  }
-
-  if (props.commercialRepayments && props.commercialRepayments.length) {
-    cols.push({
-      title: '商贷还款',
-      titleColSpan: 3,
-      key: 'commercial',
-      children: [
-        { title: '本期本金', key: 'commercial.principal' },
-        { title: '本期利息', key: 'commercial.interest' },
-        { title: '剩余本金', key: 'commercial.remainingPrincipal' }
-      ]
-    })
+    if (props.commercialRepayments && props.commercialRepayments.length) {
+      cols.push({
+        title: '商贷还款',
+        titleColSpan: 3,
+        key: 'commercial',
+        children: [
+          { title: '本期本金', key: 'commercial.principal', minWidth: 150 },
+          { title: '本期利息', key: 'commercial.interest', minWidth: 150 },
+          { title: '剩余本金', key: 'commercial.remainingPrincipal', minWidth: 150 }
+        ]
+      })
+    }
   }
 
   return cols
@@ -69,10 +94,18 @@ const datas = computed(() => {
     }
   }
 
-  return Array.from(rps.entries()).map(([date, entry]) => ({
-    date,
-    ...entry
-  }))
+  if (props.mode === RepaymentDisplayMode.Full) {
+    return Array.from(rps.entries()).map(([date, entry]) => ({
+      date,
+      ...entry
+    }))
+  } else if (props.mode === RepaymentDisplayMode.Simple) {
+    return Array.from(rps.entries()).map(([date, entry]) => ({
+      date,
+      principal: (entry.commercial?.principal ?? 0) + (entry.providentFund?.principal ?? 0),
+      interest: (entry.commercial?.interest ?? 0) + (entry.providentFund?.interest ?? 0)
+    }))
+  }
 })
 </script>
 
@@ -82,7 +115,7 @@ const datas = computed(() => {
     :data="datas"
     size="small"
     striped
-    :scroll-x="columns.length > 2 ? '1000px' : '550px'"
+    :scroll-x="'100%'"
     max-height="500px"
     virtual-scroll />
 </template>
