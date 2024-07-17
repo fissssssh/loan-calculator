@@ -17,22 +17,22 @@ const toggleDark = useToggle(isDark)
 
 <template>
   <n-config-provider :theme="theme">
-    <n-layout content-style="height:100vh;">
-      <header class="container h-16 px-4 mx-auto flex justify-between items-center">
-        <div class="text-xl">贷款计算器</div>
-        <div>
-          <n-button circle @click="toggleDark()" type="primary" :ghost="!isDark">
-            <n-icon
-              :size="24"
-              :component="isDark ? WeatherSunny24Regular : WeatherMoon24Filled"></n-icon>
-          </n-button>
+    <n-layout class="h-screen">
+      <n-layout-header bordered>
+        <div class="container h-16 px-4 mx-auto flex justify-between items-center">
+          <div class="text-xl">贷款计算器</div>
+          <div>
+            <n-button circle @click="toggleDark()" type="primary" :ghost="!isDark">
+              <n-icon
+                :size="24"
+                :component="isDark ? WeatherSunny24Regular : WeatherMoon24Filled"></n-icon>
+            </n-button>
+          </div>
         </div>
-      </header>
-      <main class="mx-auto container px-4">
+      </n-layout-header>
+      <n-layout-content class="mx-auto container p-4">
         <router-view></router-view>
-      </main>
+      </n-layout-content>
     </n-layout>
   </n-config-provider>
 </template>
-
-<style scoped></style>

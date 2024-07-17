@@ -170,6 +170,11 @@ function calculate() {
           <template #unchecked> 简洁 </template>
         </n-switch>
       </template>
+      <n-tab-pane name="统计">
+        <RepaymentsStatistic
+          :commercial-repayments="commercialRepayments"
+          :provident-fund-repayments="providentFundRepayments" />
+      </n-tab-pane>
       <n-tab-pane name="表格">
         <RepaymentsTable
           :mode="displayMode"
