@@ -172,6 +172,7 @@ function calculate() {
       </template>
       <n-tab-pane name="统计">
         <RepaymentsStatistic
+          :mode="displayMode"
           :commercial-repayments="commercialRepayments"
           :provident-fund-repayments="providentFundRepayments" />
       </n-tab-pane>
